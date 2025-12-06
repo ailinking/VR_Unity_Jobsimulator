@@ -1,0 +1,49 @@
+# Unity
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+MemoryCaptures/
+
+# Auto-generated project files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# IDE
+.idea/
+.vs/
+.vscode/
+
+# Crash reports
+sysinfo.txt
+
+# Visual Studio build
+bin/
+obj/
+TestResults/
+
+# Rider cache
+.rider/
+
+# Unity Addressables build cache (optional)
+*/ServerData/
+
+# Builds
+*.apk
+*.aab
+*.ipa
+
+# Keep Assets/, ProjectSettings/, Packages/ tracked
