@@ -11,6 +11,7 @@ public class CabinetMenuController : MonoBehaviour
     public Collider[] leverSegments;
     public float probeRadius = 0.05f;
     public string segmentTag = "CabinetMenu";
+    public Vector3 forwardAxis = Vector3.forward;
     public float forwardOffset = 0.2f;
     public float downOffset = 0.2f;
     public float doorTime = 0.25f;
@@ -22,25 +23,25 @@ public class CabinetMenuController : MonoBehaviour
     public Vector3 doorBottomClosedLocal;
     public Vector3 doorBottomOpenLocal;
 
-    private Vector3[] levelBasePos;
-    private int currentIndex = -1;
+    private Vector3[] basePos;
+    private int current = -1;
     private Coroutine routine;
 
     void Start()
     {
         if (levelTransforms != null)
         {
-            levelBasePos = new Vector3[levelTransforms.Length];
+            basePos = new Vector3[levelTransforms.Length];
             for (int i = 0; i < levelTransforms.Length; i++)
             {
-                if (levelTransforms[i] != null) levelBasePos[i] = levelTransforms[i].localPosition;
+                if (levelTransforms[i] != null) basePos[i] = levelTransforms[i].localPosition;
             }
         }
     }
 
     void Update()
     {
-        if (knob == null || levelCount <= 0) return;
+        if (knob == null || levelTransforms == null || levelTransforms.Length <= 0) return;
         int idx = -1;
         if (leverSegments != null && leverSegments.Length > 0)
         {
@@ -58,7 +59,7 @@ public class CabinetMenuController : MonoBehaviour
                 if (idx >= 0) break;
             }
         }
-        if (idx >= 0 && idx != currentIndex && routine == null) SelectIndex(idx);
+        if (idx >= 0 && idx != current && routine == null) SelectIndex(idx);
     }
 
     public void SelectIndex(int idx)
@@ -70,25 +71,25 @@ public class CabinetMenuController : MonoBehaviour
 
     private IEnumerator SwitchRoutine(int idx)
     {
-        Transform prev = currentIndex >= 0 && currentIndex < levelTransforms.Length ? levelTransforms[currentIndex] : null;
+        Transform prev = current >= 0 && current < levelTransforms.Length ? levelTransforms[current] : null;
         Transform next = levelTransforms[idx];
         if (doorTop != null || doorBottom != null) print("closing doors");
         yield return AnimatePair(doorTop, doorTop.localPosition, doorTopClosedLocal, doorBottom, doorBottom.localPosition, doorBottomClosedLocal, doorTime);
         if (prev != null)
         {
-            Vector3 pBase = levelBasePos[currentIndex];
+            Vector3 pBase = basePos[current];
             Vector3 pDown = pBase + new Vector3(0f, -downOffset, 0f);
             yield return AnimateLocal(prev, prev.localPosition, pDown, contentTime);
         }
         for (int i = 0; i < levelTransforms.Length; i++)
         {
             if (levelTransforms[i] == null) continue;
-            levelTransforms[i].localPosition = levelBasePos[i];
+            levelTransforms[i].localPosition = basePos[i];
         }
-        Vector3 nBase = levelBasePos[idx];
-        Vector3 nFront = nBase + new Vector3(0f, 0f, forwardOffset);
+        Vector3 nBase = basePos[idx];
+        Vector3 nFront = nBase + forwardAxis.normalized * forwardOffset;
         yield return AnimateLocal(next, next.localPosition, nFront, contentTime);
-        currentIndex = idx;
+        current = idx;
         if (doorTop != null || doorBottom != null) print("opening doors");
         yield return AnimatePair(doorTop, doorTop.localPosition, doorTopOpenLocal, doorBottom, doorBottom.localPosition, doorBottomOpenLocal, doorTime);
         routine = null;
