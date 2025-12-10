@@ -12,15 +12,15 @@ public class CashMachineButton : MonoBehaviour
     public float moveAmount = 0.2f;
     public bool reverse;
     public bool isOpen;
-    private Vector3 initialPos;
-    private bool isPressing;
-    private bool hasInitial;
+    public Vector3 initialPos;
+    public bool isPressing;
+    public bool hasInitial;
     public bool isCloseButton;
     public float moveTime = 0.35f;
     public float bounceFraction = 0.1f;
     public float bounceTime = 0.08f;
     public bool enableBounce = true;
-    private Coroutine moveRoutine;
+    private Coroutine routine;
     public AudioSource audioSource;
 
     void Start()
@@ -75,8 +75,8 @@ public class CashMachineButton : MonoBehaviour
 
     private void MoveTo(Vector3 target)
     {
-        if (moveRoutine != null) StopCoroutine(moveRoutine);
-        moveRoutine = StartCoroutine(AnimateTo(target));
+        if (routine != null) StopCoroutine(routine);
+        routine = StartCoroutine(AnimateTo(target));
     }
 
     private IEnumerator AnimateTo(Vector3 target)
